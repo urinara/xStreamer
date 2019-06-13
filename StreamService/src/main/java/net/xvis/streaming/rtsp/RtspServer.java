@@ -13,12 +13,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.BindException;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.WeakHashMap;
 import java.util.regex.Matcher;
@@ -28,7 +26,7 @@ public class RtspServer {
 
     public final static String TAG = "RtspServer";
     public static String SERVER_NAME = "XVIS RTSP Server";
-    public static final int DEFAULT_RTSP_PORT = 8086;
+    public static final int DEFAULT_RTSP_PORT = 8086; // default: 554, RTSPS default = 322
 
     // RTSP header
     public final static int ERROR_BIND_FAILED = 0x00;

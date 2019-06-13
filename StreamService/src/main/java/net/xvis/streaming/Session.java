@@ -300,11 +300,13 @@ public class Session {
         // Prevents two different sessions from using the same peripheral at the same time
         if (audioStream != null) {
             description.append(videoStream.getSessionDescription());
-            description.append("a=control:trackID=0" + "\r\n");
+            description.append("a=control:trackID=0");
+            description.append(RtspHeader.CRLF);
         }
         if (videoStream != null) {
             description.append(videoStream.getSessionDescription());
-            description.append("a=control:trackID=1" + "\r\n");
+            description.append("a=control:trackID=1");
+            description.append(RtspHeader.CRLF);
         }
 
         return description.toString();
