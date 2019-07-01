@@ -12,7 +12,7 @@ public class SessionManager {
 
     private SessionManager() { }
 
-    public synchronized static Session findSession(URI resourceUri, ) {
+    public synchronized static Session findSession(URI resourceUri) {
         Log.e(TAG, "finding a session: " + sessionUri.getPath());
         return sessionMap.get(sessionUri.getPath());
     }
