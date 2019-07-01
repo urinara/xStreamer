@@ -299,7 +299,7 @@ public class Session {
         description.append(RtspHeader.CRLF);
         // Prevents two different sessions from using the same peripheral at the same time
         if (audioStream != null) {
-            description.append(videoStream.getSessionDescription());
+            description.append(audioStream.getSessionDescription());
             description.append("a=control:trackID=0");
             description.append(RtspHeader.CRLF);
         }
@@ -323,6 +323,7 @@ public class Session {
     public String getSessionId() {
         return sessionId;
     }
+
     public boolean isStreaming() {
         return videoStream != null && videoStream.isStreaming()
                 || audioStream != null && audioStream.isStreaming();

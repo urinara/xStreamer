@@ -5,20 +5,20 @@ import android.util.Log;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.SocketException;
+import java.net.URI;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RtspRequest extends RtspHeader {
     private static final String TAG = "RtspRequest";
-
     private static final Pattern regexMethod = Pattern.compile("(\\w+) (\\S+) (\\S+)");
     private static final Pattern regexHeader = Pattern.compile("(\\S+):(.+)");
 
     private String method = "";
-    private String uri = "";
+    private URI uri;
     private String version = "";
 
-    public static RtspRequest waitForRequest(BufferedReader input) throws IOException {
+    static RtspRequest waitForRequest(BufferedReader input) throws IOException {
         Log.e(TAG, "----> waiting for request...");
         RtspRequest request = new RtspRequest();
 
@@ -26,8 +26,9 @@ public class RtspRequest extends RtspHeader {
         String requestLine = input.readLine();
         if (requestLine == null) {
             Log.e(TAG, "<---- requestLine is null");
-            throw new SocketException("Client disconnected");
+            throw new IOException("Possibly client disconnected");
         }
+
         Log.e(TAG, "C->S: " + requestLine);
         Matcher methodMatcher = regexMethod.matcher(requestLine);
         if (methodMatcher.find()) {
@@ -35,16 +36,11 @@ public class RtspRequest extends RtspHeader {
             if (request.method == null) {
                 request.method = "";
             }
-            request.uri = methodMatcher.group(2);
-            if (request.uri == null) {
-                request.uri = "";
-            }
+            request.uri = URI.create(methodMatcher.group(2));
             request.version = methodMatcher.group(3);
             if (request.version == null) {
                 request.version = "";
             }
-        } else {
-            return null;
         }
 
         // Parse the following headers
@@ -65,18 +61,40 @@ public class RtspRequest extends RtspHeader {
 
         if (header == null) {
             Log.e(TAG, "<---- header is null");
-            throw new SocketException("Client disconnected");
+            throw new IOException("Possibly client disconnected");
         }
 
         Log.e(TAG, "<---- end of request waiting");
         return request;
     }
 
+    boolean validate() {
+        if (uri == null) {
+            return false;
+        }
+        if (uri.getScheme() == null) {
+            return false;
+        }
+        if (!uri.getScheme().equals(RtspServer.SCHEME)) {
+            return false;
+        }
+        if (uri.getHost().isEmpty() && uri.getPath().isEmpty()) {
+            return false;
+        }
+        if (method == null || method.isEmpty()) {
+            return false;
+        }
+        if (version == null || version.isEmpty()) {
+            return false;
+        }
+        return true;
+    }
+
     public String getMethod() {
         return method;
     }
 
-    public String getUri() {
+    public URI getUri() {
         return uri;
     }
 

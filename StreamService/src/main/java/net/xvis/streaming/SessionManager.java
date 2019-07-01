@@ -1,6 +1,6 @@
 package net.xvis.streaming;
 
-import android.net.Uri;
+import java.net.URI;
 import android.util.Log;
 
 import java.util.HashMap;
@@ -12,7 +12,7 @@ public class SessionManager {
 
     private SessionManager() { }
 
-    public synchronized static Session findSession(Uri sessionUri) {
+    public synchronized static Session findSession(URI resourceUri, ) {
         Log.e(TAG, "finding a session: " + sessionUri.getPath());
         return sessionMap.get(sessionUri.getPath());
     }
@@ -27,7 +27,7 @@ public class SessionManager {
         return false;
     }
 
-    public synchronized static boolean removeSession(Uri sessionUri) {
+    public synchronized static boolean removeSession(URI sessionUri) {
         Session session = sessionMap.get(sessionUri.getPath());
         if (session == null) {
             return false;

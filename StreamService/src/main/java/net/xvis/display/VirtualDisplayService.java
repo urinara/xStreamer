@@ -23,11 +23,17 @@ import android.util.Log;
 import net.xvis.streaming.Session;
 import net.xvis.streaming.SessionManager;
 import net.xvis.streaming.hw.EncoderDebugger;
+import net.xvis.streaming.resources.MediaContainer;
+import net.xvis.streaming.resources.ResourceManager;
+import net.xvis.streaming.rtsp.RtspMethod;
 import net.xvis.streaming.rtsp.RtspServer;
+import net.xvis.streaming.video.DisplayStream;
 import net.xvis.streaming.video.VideoQuality;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class VirtualDisplayService extends Service {
     private static final String TAG = "VirtualDisplayService";
@@ -153,17 +159,34 @@ public class VirtualDisplayService extends Service {
             return;
         }
 
-        // start stream session
-        Session session = SessionManager.findSession(Uri.parse("rtsp://localhost/test/live"));
-        if (session == null) {
-            session = Session.builder()
-                    .setVideoEncoder(Session.DISPLAY_H264)
-                    .setVirtualDisplay(virtualDisplay)
-                    .setVideoQuality(new VideoQuality(displayMetrics.widthPixels, displayMetrics.heightPixels))
-                    .build(Uri.parse("rtsp://localhost/test/live"));
-            SessionManager.addSession(session);
-            session.startStream();
+        // register this media resource
+        try {
+            URI baseUri = new URI(RtspServer.SCHEME, "127.0.0.1:8086", "/test/live/", null, null);
+            MediaContainer mediaContainer = new MediaContainer(baseUri.toString());
+            URI controlUri = baseUri.resolve("trackID=0");
+            mediaContainer.addMedia(controlUri.toString(), new DisplayStream(virtualDisplay));
+            mediaContainer.addSupportedMethod(RtspMethod.DESCRIBE);
+            mediaContainer.addSupportedMethod(RtspMethod.OPTIONS);
+            mediaContainer.addSupportedMethod(RtspMethod.PLAY);
+            mediaContainer.addSupportedMethod(RtspMethod.SETUP);
+            mediaContainer.addSupportedMethod(RtspMethod.TEARDOWN);
+            mediaContainer.addSupportedMethod(RtspMethod.PAUSE);
+            ResourceManager.addResource(mediaContainer);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
         }
+
+//        // start stream session
+//        Session session = SessionManager.findSession(URI.create("rtsp://localhost/test/live"));
+//        if (session == null) {
+//            session = Session.builder()
+//                    .setVideoEncoder(Session.DISPLAY_H264)
+//                    .setVirtualDisplay(virtualDisplay)
+//                    .setVideoQuality(new VideoQuality(displayMetrics.widthPixels, displayMetrics.heightPixels))
+//                    .build(Uri.parse("rtsp://localhost/test/live"));
+//            SessionManager.addSession(session);
+//            session.startStream();
+//        }
 
         Log.e("TAG", "Starting RtspServer " + displayMetrics.widthPixels + "x" + displayMetrics.heightPixels + ":" + Thread.currentThread().getId());
         rtspServer = new RtspServer();
