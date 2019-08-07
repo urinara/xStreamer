@@ -10,8 +10,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ResourceManager {
-    private static String TAG = "ResourceManager";
+    // resource
+    // * : general capabilities of the next hop (the RTSP agent in direct comm with the request header)
+    // hostAddress : RTSP agent general capabilities without regard to any specific media
+    // test/live
+    // test/live/trackID=0
 
+    private static String TAG = "ResourceManager";
     private static Map<String, MediaContainer> resourceMap = new HashMap<>();
 
     private ResourceManager() { }

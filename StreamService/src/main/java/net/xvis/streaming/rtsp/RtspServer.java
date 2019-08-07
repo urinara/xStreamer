@@ -259,11 +259,27 @@ public class RtspServer {
     RtspResponse handleSetup(RtspRequest request, Socket clientSocket) {
         RtspResponse response = new RtspResponse(request);
 
+        // see if requested URI is available
         MediaContainer mediaContainer = ResourceManager.findResource(request.getUri());
         if (mediaContainer == null) {
             response.setStatus(RtspResponse.STATUS_404_NOT_FOUND);
             return response;
         }
+
+        Session session = null;
+        // check if the request contains the sessionID
+        String sessionId = request.getValue(RtspRequest.SESSION);
+        if (sessionId != null && !sessionId.isEmpty()) {
+            session = SessionManager.findSession(sessionId);
+        }
+
+        // create a new session
+        if (session == null) {
+            session = Session.builder().build(request.getUri());
+        }
+
+        String trackId = "";
+        int ssrc = session.getTrack(trackId).getSSRC();
 
         //MediaStream mediaStream = mediaContainer.
         clientSocket.getPort();
@@ -281,7 +297,6 @@ public class RtspServer {
             rtcpPort = session.getTrack(trackId).getRtcpPort(destination);
         }
 
-        int ssrc = session.getTrack(trackId).getSSRC();
         int serverRtpPort = session.getTrack(trackId).getLocalRtpPort();
         int serverRtcpPort = session.getTrack(trackId).getLocalRtcpPort();
         String castMode = destination.isMulticastAddress() ? "multicast" : "unicast";

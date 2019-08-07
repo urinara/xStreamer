@@ -9,12 +9,18 @@ import java.util.Map;
 public class SessionManager {
     private static String TAG = "SessionManager";
     private static Map<String, Session> sessionMap = new HashMap<>();
+    private static Map<String, Session> sessionIdMap = new HashMap<>();
 
     private SessionManager() { }
 
     public synchronized static Session findSession(URI resourceUri) {
-        Log.e(TAG, "finding a session: " + sessionUri.getPath());
-        return sessionMap.get(sessionUri.getPath());
+        Log.e(TAG, "finding a session: " + resourceUri.getPath());
+        return sessionMap.get(resourceUri.getPath());
+    }
+
+    public synchronized static Session findSession(String sessionId) {
+        Log.e(TAG, "finding a session: " + sessionId);
+        return sessionIdMap.get(sessionId);
     }
 
     public synchronized static boolean addSession(Session newSession) {

@@ -22,6 +22,7 @@ import net.xvis.utils.TimeUtils;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
@@ -87,7 +88,7 @@ public class Session {
     private String sessionName;
     private String sessionInformation;
     private String serverAddress;
-    private Uri uri;
+    private URI uri;
     private String emailAddress;
     private String phoneNumber;
     private String connectionAddress;
@@ -120,7 +121,7 @@ public class Session {
 
         private Builder() {}
 
-        public Session build(Uri sessionUri) {
+        public Session build(URI sessionUri) {
             session.timeCreated = TimeUtils.currentTimeMillis();
 
             // session threads and handlers
@@ -312,7 +313,7 @@ public class Session {
         return description.toString();
     }
 
-    public Uri getUri() {
+    public URI getUri() {
         return uri;
     }
 
