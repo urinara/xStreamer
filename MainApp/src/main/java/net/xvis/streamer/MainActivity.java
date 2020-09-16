@@ -71,6 +71,7 @@ public class MainActivity extends Activity {
         }
         sb.append("\n");
 
+        // test commit
         try {
             Enumeration<NetworkInterface> networkItr = NetworkInterface.getNetworkInterfaces();
             while (networkItr.hasMoreElements()) {
