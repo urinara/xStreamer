@@ -33,6 +33,7 @@ public class TimeUtils {
         return (seconds << 32) | fraction;
     }
 
+    // test
     public static long toNtpSeconds(long timeInMillis) {
         boolean base1900 = timeInMillis < unixTimeAtMaxNtp; // time < 7-Feb-2036 6h28m16s
         long baseTime = (base1900) ? timeInMillis + unixEpochInNtp : timeInMillis - unixTimeAtMaxNtp;
