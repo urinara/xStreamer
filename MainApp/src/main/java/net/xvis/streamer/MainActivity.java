@@ -70,7 +70,7 @@ public class MainActivity extends Activity {
             }
         }
         sb.append("\n");
-
+        //c5
         try {
             Enumeration<NetworkInterface> networkItr = NetworkInterface.getNetworkInterfaces();
             while (networkItr.hasMoreElements()) {
